@@ -16,8 +16,8 @@ Example Usage:
         TaskbarTopMostHook.shellMessage(wParam, lParam)
     }
     TaskbarTopMostHook.setHook(callBackTaskbarTopMost)
-    callBackTaskbarTopMost(OnOff)    {
-        tooltip "TopMost : " OnOff
+    callBackTaskbarTopMost(onOff)    {
+        tooltip "TopMost : " onOff
     }
 */
 
