@@ -11,10 +11,6 @@
 
 /*
 Example Usage:
-    ShellHookWindow.register("shellMessage"), ShellHookWindow.unregisterOnExit()
-    shellMessage(wParam, lParam)    {
-        TaskbarTopMostHook.shellMessage(wParam, lParam)
-    }
     TaskbarTopMostHook.setHook("callBackTaskbarTopMost")
     callBackTaskbarTopMost(onOff)    {
         tooltip % "TopMost : " onOff
@@ -26,9 +22,9 @@ class VersionManager_TaskbarTopMostHook
     static _ := VersionManager_TaskbarTopMostHook._init()
     _init()    {
         global
-        TASKBARTOPMOSTHOOK_VERSION := "1.0.1"
-        if (!this._verCheck(SHELLHOOKWINDOW_VERSION, "1.0.0"))
-            throw exception("SHELLHOOKWINDOW_VERSION version 1.x is required (minimum 1.0.0).")
+        TASKBARTOPMOSTHOOK_VERSION := "2.0.0"
+        if (!this._verCheck(SHELLHOOKWINDOW_VERSION, "2.0.0"))
+            throw exception("SHELLHOOKWINDOW_VERSION version 2.x is required (minimum 2.0.0).")
         return true
     }
     _verCheck(byRef actual, required)    {
@@ -46,6 +42,10 @@ class TaskbarTopMostHook
     static _callbacks:={}
         ,_priorTopMostState:="", _thisTopMostState:=""
         ,_obmCallback:=objBindMethod(TaskbarTopMostHook,"_callback")
+        ,_:=TaskbarTopMostHook._init()
+    _init()    {
+        ShellHookWindow.ensureOnMessage(objBindMethod(this,"_onShellHookMessage"))
+    }
     setHook(functionName, runImmediately:=true)    {
         if (this._callbacks.hasKey(functionName))
             return
@@ -62,7 +62,7 @@ class TaskbarTopMostHook
             this._callbacks:={}
         }
     }
-    shellMessage(wParam, lParam, _*)    {
+    _onShellHookMessage(wParam, lParam, _*)    {
         if (!this._callbacks.count())
             return
         switch (wParam)
